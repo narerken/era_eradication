@@ -1,44 +1,42 @@
 using UnityEngine;
 
-[RequireComponent(typeof(RectTransform))]
-public class SafeArea : MonoBehaviour
+namespace Emberfall.UI
 {
-    private RectTransform _rect;
-    private Rect _lastSafeArea = new Rect(0, 0, 0, 0);
-    private ScreenOrientation _lastOrientation = ScreenOrientation.AutoRotation;
 
-    private void Awake()
+    [RequireComponent(typeof(RectTransform))]
+    public class SafeArea : MonoBehaviour
     {
-        _rect = GetComponent<RectTransform>();
-        Apply();
-    }
+        private RectTransform _rect;
+        private Rect _lastSafeArea = new Rect(0, 0, 0, 0);
+        private ScreenOrientation _lastOrientation;
 
-    private void Update()
-    {
-        // (rotation, foldables, editor resize).
-        if (Screen.safeArea != _lastSafeArea || Screen.orientation != _lastOrientation)
+        private void Awake()
         {
+            _rect = GetComponent<RectTransform>();
             Apply();
         }
-    }
 
-    private void Apply()
-    {
-        Rect safeArea = Screen.safeArea;
-        _lastSafeArea = safeArea;
-        _lastOrientation = Screen.orientation;
+        private void Update()
+        {
+            if (Screen.safeArea != _lastSafeArea || Screen.orientation != _lastOrientation)
+                Apply();
+        }
 
-        if (Screen.width <= 0 || Screen.height <= 0) return;
+        private void Apply()
+        {
+            Rect safeArea = Screen.safeArea;
+            _lastSafeArea = safeArea;
+            _lastOrientation = Screen.orientation;
 
-        Vector2 anchorMin = safeArea.position;
-        Vector2 anchorMax = safeArea.position + safeArea.size;
+            if (Screen.width <= 0 || Screen.height <= 0) return;
 
-        anchorMin.x /= Screen.width;
-        anchorMin.y /= Screen.height;
-        anchorMax.x /= Screen.width;
-        anchorMax.y /= Screen.height;
+            Vector2 anchorMin = safeArea.position;
+            Vector2 anchorMax = safeArea.position + safeArea.size;
+            anchorMin.x /= Screen.width; anchorMin.y /= Screen.height;
+            anchorMax.x /= Screen.width; anchorMax.y /= Screen.height;
 
-        _rect.anchorMin = anchorMin;
-        _rect.anchorMax = anchorMax;
+            _rect.anchorMin = anchorMin;
+            _rect.anchorMax = anchorMax;
+        }
     }
 }

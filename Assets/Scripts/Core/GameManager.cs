@@ -1,70 +1,58 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Emberfall.Data;
+using Emberfall.Save;
 
-public class GameManager : MonoBehaviour
+namespace Emberfall.Core
 {
-    public static GameManager Instance { get; private set; }
 
-    [Header("Scene names (must match Build Settings)")]
-    [SerializeField] private string mainMenuScene = "MainMenu";
-    [SerializeField] private string firstLevelScene = "Level01";
-
-    public bool IsPaused { get; private set; }
-
-    private void Awake()
+    public class GameManager : MonoBehaviour
     {
-        // singleton
-        if (Instance != null && Instance != this)
+        public static GameManager Instance { get; private set; }
+
+        [Header("All levels, in order")]
+        public LevelData[] allLevels;
+
+        public LevelData CurrentLevel { get; private set; }
+        public int RunScore { get; private set; }
+        public int RunHearts { get; private set; }
+
+        private const string MenuSceneName = "MainMenu";
+        private const string GameSceneName = "Game";
+
+        private void Awake()
         {
-            Destroy(gameObject);
-            return;
+            if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-    }
 
-    // Main Menu
-    public void PlayGame()
-    {
-        Time.timeScale = 1f;
-        IsPaused = false;
-        SceneManager.LoadScene(firstLevelScene);
-    }
+        public void LoadLevel(LevelData level)
+        {
+            CurrentLevel = level;
+            RunScore = 0;
+            SceneManager.LoadScene(GameSceneName);
+        }
 
-    public void QuitGame()
-    {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
-    }
+        public void ReloadCurrentLevel()
+        {
+            if (CurrentLevel != null) LoadLevel(CurrentLevel);
+        }
 
-    // HUD and Pause
-    public void PauseGame()
-    {
-        IsPaused = true;
-        Time.timeScale = 0f;
-    }
+        public void ReturnToMenu() => SceneManager.LoadScene(MenuSceneName);
 
-    public void ResumeGame()
-    {
-        IsPaused = false;
-        Time.timeScale = 1f;
-    }
+        public void AddScore(int amount)
+        {
+            RunScore += amount;
+            GameEvents.RaiseScoreChanged(RunScore);
+        }
 
-    public void RestartLevel()
-    {
-        Time.timeScale = 1f;
-        IsPaused = false;
-        Scene active = SceneManager.GetActiveScene();
-        SceneManager.LoadScene(active.name);
-    }
-
-    public void GoToMainMenu()
-    {
-        Time.timeScale = 1f;
-        IsPaused = false;
-        SceneManager.LoadScene(mainMenuScene);
+        public void CompleteCurrentLevel()
+        {
+            if (CurrentLevel == null) return;
+            SaveManager.Instance?.SubmitScore(RunScore);
+            int next = CurrentLevel.levelIndex + 1;
+            if (next <= allLevels.Length) SaveManager.Instance?.UnlockLevel(next);
+        }
     }
 }

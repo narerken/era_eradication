@@ -1,31 +1,47 @@
 using UnityEngine;
+using Emberfall.Core;
+using Emberfall.Data;
+using Emberfall.Save;
 
-/// <summary>
-/// Put this on the MainMenu's Canvas (or SafeArea) object and wire the Play
-/// and Quit buttons to THIS component's methods, not directly to a GameManager
-/// object in the scene.
-///
-/// Why: GameManager is a DontDestroyOnLoad singleton. Every time MainMenu is
-/// (re)loaded, a fresh GameManager object is created in it, and its own
-/// Awake() immediately destroys itself if a singleton instance already
-/// exists (e.g. after returning here from Level01). A button wired straight
-/// to that local, now-destroyed object will silently do nothing. Routing the
-/// call through this component (which is NOT destroyed) and reading
-/// GameManager.Instance at click time avoids that dangling-reference bug.
-/// </summary>
-public class MainMenuController : MonoBehaviour
+namespace Emberfall.UI
 {
-    public void PlayGame()
-    {
-        GameManager.Instance.PlayGame();
-    }
 
-    public void QuitGame()
+    public class MainMenuController : MonoBehaviour
     {
-        GameManager.Instance.QuitGame();
-    }
+        [SerializeField] private GameObject menuPanel;
+        [SerializeField] private GameObject levelSelectPanel;
+        [SerializeField] private GameObject settingsPanel;
+        [SerializeField] private LevelSelectController levelSelect;
 
-    // Button hookups (Inspector -> OnClick):
-    //   "PLAY" button -> MainMenuController.PlayGame
-    //   "QUIT" button -> MainMenuController.QuitGame
+        private void Start() => ShowMenu();
+
+        public void ShowMenu()
+        {
+            menuPanel.SetActive(true);
+            levelSelectPanel.SetActive(false);
+            if (settingsPanel != null) settingsPanel.SetActive(false);
+        }
+
+        public void OnPlayPressed()
+        {
+            menuPanel.SetActive(false);
+            levelSelectPanel.SetActive(true);
+            levelSelect.Refresh();
+        }
+
+        public void OnSettingsPressed()
+        {
+            menuPanel.SetActive(false);
+            if (settingsPanel != null) settingsPanel.SetActive(true);
+        }
+
+        public void OnQuitPressed()
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
+        }
+    }
 }

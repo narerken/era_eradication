@@ -1,58 +1,66 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
+using Emberfall.Core;
 
-public class HUDController : MonoBehaviour
+namespace Emberfall.UI
 {
-    [Header("Hearts (assign 3 heart Image objects, left to right)")]
-    [SerializeField] private Image[] heartIcons;
-    [SerializeField] private Sprite heartFullSprite;
-    [SerializeField] private Sprite heartEmptySprite;
 
-    [SerializeField] private TMP_Text scoreLabel;
-    [SerializeField] private Button pauseButton;
-    [SerializeField] private PausePanel pausePanel;
-
-    private int _lives = 3;
-    private int _score = 0;
-
-    private void Start()
+    public class HUDController : MonoBehaviour
     {
-        _lives = heartIcons != null ? heartIcons.Length : 3;
-        pauseButton.onClick.AddListener(() => pausePanel.Show());
-        RefreshHearts();
-        RefreshScore();
-    }
+        [SerializeField] private Transform heartsContainer;
+        [SerializeField] private Text scoreText;
+        [SerializeField] private GameObject levelCompletePanel;
+        [SerializeField] private GameObject gameOverPanel;
+        [SerializeField] private PauseController pauseController;
 
-    public void AddScore(int amount)
-    {
-        _score += amount;
-        RefreshScore();
-    }
-
-    public void LoseLife()
-    {
-        _lives = Mathf.Max(0, _lives - 1);
-        RefreshHearts();
-        if (_lives == 0)
+        private void OnEnable()
         {
-            // in the future InshaAllah
+            GameEvents.HeartsChanged += OnHeartsChanged;
+            GameEvents.ScoreChanged += OnScoreChanged;
+            GameEvents.LevelCompleted += OnLevelCompleted;
+            GameEvents.PlayerDied += OnPlayerDied;
         }
-    }
 
-    private void RefreshHearts()
-    {
-        if (heartIcons == null) return;
-        for (int i = 0; i < heartIcons.Length; i++)
+        private void OnDisable()
         {
-            if (heartIcons[i] == null) continue;
-            heartIcons[i].sprite = i < _lives ? heartFullSprite : heartEmptySprite;
+            GameEvents.HeartsChanged -= OnHeartsChanged;
+            GameEvents.ScoreChanged -= OnScoreChanged;
+            GameEvents.LevelCompleted -= OnLevelCompleted;
+            GameEvents.PlayerDied -= OnPlayerDied;
         }
-    }
 
-    private void RefreshScore()
-    {
-        if (scoreLabel != null)
-            scoreLabel.text = $"SCORE {_score}";
+        private void Start()
+        {
+            levelCompletePanel.SetActive(false);
+            gameOverPanel.SetActive(false);
+            OnScoreChanged(0);
+        }
+
+        private void OnHeartsChanged(int current, int max)
+        {
+            for (int i = 0; i < heartsContainer.childCount; i++)
+                heartsContainer.GetChild(i).gameObject.SetActive(i < current);
+        }
+
+        private void OnScoreChanged(int score)
+        {
+            if (scoreText != null) scoreText.text = "SCORE " + score;
+        }
+
+        private void OnLevelCompleted() => levelCompletePanel.SetActive(true);
+        private void OnPlayerDied() => gameOverPanel.SetActive(true);
+
+        public void OnPausePressed() => pauseController.Pause();
+        public void OnRetryPressed() => GameManager.Instance?.ReloadCurrentLevel();
+        public void OnMenuFromEndPressed() => GameManager.Instance?.ReturnToMenu();
+        public void OnNextLevelPressed()
+        {
+            var gm = GameManager.Instance;
+            if (gm == null || gm.CurrentLevel == null) return;
+            int nextIndex = gm.CurrentLevel.levelIndex;
+            foreach (var lvl in gm.allLevels)
+                if (lvl.levelIndex == gm.CurrentLevel.levelIndex + 1) { gm.LoadLevel(lvl); return; }
+            gm.ReturnToMenu();
+        }
     }
 }

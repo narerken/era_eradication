@@ -1,22 +1,63 @@
-# Baqsha Qorgaushy ("Defender of the Garden")
+# The Era of Eradication
 
-A casual puzzle-defense game for mobile (Android / iOS). Match flowers on the puzzle
-grid to charge your garden's weapons and stop pests from reaching your vegetable patch.
+2D mobile platformer. A lantern-robot crosses a collapsing ruin, dodging three types of
+guardian machines on the way to each gate.
 
-- **Genre:** Casual puzzle-defense (match-3 + tower defense)
-- **Platform:** Android / iOS, portrait
-- **Engine:** Unity 2D
-- **Course:** Game Development Fundamentals — Assignment 8–9
+## Unity version
 
-## Core loop
-Match flower tiles → Charge the garden's weapon → Defend against the pest wave → Survive and face the next wave.
+`6000.6.0f1` (Unity 6), 2D, new Input System.
 
-## Project status (Week 9)
-- [x] Repository set up
-- [x] Game Design Document (GDD)
-- [x] Main Menu / HUD / Pause UI screens
-- [ ] Match-3 grid logic (Week 10)
-- [ ] Pest AI and pathing (Week 11)
-- [ ] Sound and VFX (Week 12)
-- [ ] Save/load and polish (Week 13)
+## Opening the project
 
+1. Open this folder in Unity Hub (`6000.6.0f1`), let it finish importing/compiling.
+2. Menu bar → **Emberfall → Build Full Project** — regenerates sprites, data, prefabs and
+   both scenes (`MainMenu`, `Game`). Safe to re-run.
+3. Open `Assets/Scenes/MainMenu.unity`, press Play.
+
+## Controls
+
+- On-screen stick (bottom-left): move.
+- JUMP button (bottom-right): jump, with coyote time + jump buffering.
+- Keyboard in the Editor: A/D or arrow keys to move, Space/W/Up to jump.
+- II button (top-right, in-level): pause.
+
+## Enemies
+
+| Enemy | States | Tell |
+|---|---|---|
+| Sentinel (Patroller) | Patrol → Chase → Attack → Return | Freezes + flashes red before lunging |
+| Turret (Shooter) | Idle → Aim → Shoot → Cooldown | Barrel glows during the aim |
+| Brute (Charger) | Patrol → WindUp → Charge → Cooldown | Shakes before a straight dash |
+
+All three read the player with distance + vision cone + a raycast blocked by walls. Tuning
+numbers live in `EnemyStats` / `PlayerStats` under `Assets/Data/`, not in code.
+
+## Data & saves
+
+- `Assets/Data/*.asset` — stats assets + three `LevelData` assets. One `Game` scene and
+  `LevelSpawner` build whichever level the player picked.
+- `SaveManager` writes JSON to `Application.persistentDataPath/save.json` (score, unlocked
+  levels, volume). A missing or corrupted file falls back to defaults instead of crashing.
+
+## Project layout
+
+```
+Assets/
+  Art/            generated + real sprites
+  Data/           ScriptableObject balance + level assets
+  Editor/         ProjectBuilder.cs - one-click project build
+  Prefabs/
+  Scenes/         MainMenu.unity, Game.unity
+  Scripts/
+    Core/         GameManager, GameEvents
+    Camera/       CameraFollow2D
+    Data/         ScriptableObject class definitions
+    Enemies/      EnemyBase + Patroller/Shooter/Charger + Projectile + EnemyHealth
+    Input/        MobileInput, OnScreenStick, OnScreenButton
+    Player/       PlayerController2D, PlayerHealth
+    Save/         SaveData, SaveManager
+    UI/           Menu/HUD/Pause/LevelSelect/Settings/ResetProgress/SafeArea
+    World/        LevelSpawner, Pickup, Goal, Hazard
+```
+
+See `DECISIONS.md` for how the AI assistant works on this project.
