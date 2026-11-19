@@ -7,13 +7,6 @@ guardian machines on the way to each gate.
 
 `6000.6.0f1` (Unity 6), 2D, new Input System.
 
-## Opening the project
-
-1. Open this folder in Unity Hub (`6000.6.0f1`), let it finish importing/compiling.
-2. Menu bar → **Emberfall → Build Full Project** — regenerates sprites, data, prefabs and
-   both scenes (`MainMenu`, `Game`). Safe to re-run.
-3. Open `Assets/Scenes/MainMenu.unity`, press Play.
-
 ## Controls
 
 - On-screen stick (bottom-left): move.
