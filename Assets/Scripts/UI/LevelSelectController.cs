@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using Emberfall.Audio;
 using Emberfall.Core;
 using Emberfall.Data;
 using Emberfall.Save;
@@ -36,11 +37,19 @@ namespace Emberfall.UI
                 if (unlocked)
                 {
                     LevelData captured = level;
-                    button.onClick.AddListener(() => gm.LoadLevel(captured));
+                    button.onClick.AddListener(() =>
+                    {
+                        AudioManager.Instance?.PlayUIClick();
+                        gm.LoadLevel(captured);
+                    });
                 }
             }
         }
 
-        public void OnBackPressed() => menu.ShowMenu();
+        public void OnBackPressed()
+        {
+            AudioManager.Instance?.PlayUIClick();
+            menu.ShowMenu();
+        }
     }
 }

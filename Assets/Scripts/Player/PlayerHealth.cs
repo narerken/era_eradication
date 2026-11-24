@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Emberfall.Audio;
 using Emberfall.Core;
 using Emberfall.Data;
 
@@ -55,6 +56,7 @@ namespace Emberfall.Player
             if (CurrentHearts <= 0)
             {
                 _controller.EnterDead();
+                AudioManager.Instance?.PlayDeath();
 
                 Invoke(nameof(RaiseDeathEvent), 0.4f);
             }
@@ -62,6 +64,7 @@ namespace Emberfall.Player
             {
                 IsInvulnerable = true;
                 _invulnTimer = stats.hurtInvulnerability;
+                AudioManager.Instance?.PlayHit();
             }
         }
 

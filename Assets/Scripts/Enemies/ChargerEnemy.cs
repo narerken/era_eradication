@@ -1,4 +1,5 @@
 using UnityEngine;
+using Emberfall.Audio;
 
 namespace Emberfall.Enemies
 {
@@ -30,6 +31,7 @@ namespace Emberfall.Enemies
                 _timer = stats.windUpTime;
                 Stop();
                 FacePlayer();
+                AudioManager.Instance?.PlayEnemyWindUp();
                 return;
             }
 

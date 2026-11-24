@@ -1,4 +1,5 @@
 using UnityEngine;
+using Emberfall.Audio;
 using Emberfall.Core;
 using Emberfall.Data;
 using Emberfall.Save;
@@ -24,6 +25,7 @@ namespace Emberfall.UI
 
         public void OnPlayPressed()
         {
+            AudioManager.Instance?.PlayUIClick();
             menuPanel.SetActive(false);
             levelSelectPanel.SetActive(true);
             levelSelect.Refresh();
@@ -31,12 +33,14 @@ namespace Emberfall.UI
 
         public void OnSettingsPressed()
         {
+            AudioManager.Instance?.PlayUIClick();
             menuPanel.SetActive(false);
             if (settingsPanel != null) settingsPanel.SetActive(true);
         }
 
         public void OnQuitPressed()
         {
+            AudioManager.Instance?.PlayUIClick();
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #else

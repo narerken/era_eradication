@@ -16,6 +16,10 @@ Dated log of what was checked, found broken, and fixed on this project.
 
 2026-11-19  Swapped in 3 new enemy sprite sets (Skull/Ghosts/Mouth) for Patroller/Shooter/Charger. Pickups no longer spawn within 0.8 units of a stationary Shooter (LevelSpawner.IsNearStationaryEnemy).
 
-2026-11-19  Removed assets nothing referenced anymore: the old MaskDude/NinjaFrog/PinkMan character sprites, the old fruit pickup frames, and the ProceduralSprites methods that generated sprites no longer used by anything (PlayerSprite, GroundTileSprite, PatrollerSprite, ShooterSprite, ChargerSprite, ProjectileSprite, EmberShardSprite, HeartSprite, ButtonSprite, RingSprite, SkyBackgroundSprite).
+2026-11-20  Sound pass. AudioManager self-wires via GameEvents.LevelCompleted/PlayerDied for win/lose and SceneManager.sceneLoaded for menu/level music, so no changes were needed in GameManager, Goal, or MainMenuController.
 
-2026-11-19  Stripped comments from every script and switched this file to the dated-log format above.
+2026-11-20  Hooked the remaining events into existing code: jump in PlayerController2D, hit/death in PlayerHealth, hit in EnemyHealth, wind-up at the start of each enemy's telegraph state (PatrollerEnemy/ShooterEnemy/ChargerEnemy), pickup in Pickup, and UI click across every button handler (MainMenuController, LevelSelectController, SettingsPanel, ResetProgressPanel, HUDController, PauseController). PauseController now also toggles the Paused mixer snapshot.
+
+2026-11-20  SettingsPanel already had the dB-conversion and mixer wiring from an earlier pass but no AudioMixer asset existed yet. So we create it step by step.
+
+2026-11-20 Update README.md

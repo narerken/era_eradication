@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Emberfall.Audio;
 using Emberfall.Data;
 
 namespace Emberfall.Enemies
@@ -16,6 +17,7 @@ namespace Emberfall.Enemies
         public void TakeDamage(int amount)
         {
             _hp -= amount;
+            AudioManager.Instance?.PlayHit();
             if (_hp <= 0)
             {
                 OnDied?.Invoke();

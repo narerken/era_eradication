@@ -1,4 +1,5 @@
 using UnityEngine;
+using Emberfall.Audio;
 using Emberfall.Core;
 using Emberfall.Data;
 using Emberfall.Player;
@@ -26,6 +27,7 @@ namespace Emberfall.World
             else
                 health.Heal(item.healAmount);
 
+            AudioManager.Instance?.PlayPickup();
             Destroy(gameObject);
         }
     }

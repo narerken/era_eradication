@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using Emberfall.Audio;
 using Emberfall.Core;
 
 namespace Emberfall.UI
@@ -50,11 +51,27 @@ namespace Emberfall.UI
         private void OnLevelCompleted() => levelCompletePanel.SetActive(true);
         private void OnPlayerDied() => gameOverPanel.SetActive(true);
 
-        public void OnPausePressed() => pauseController.Pause();
-        public void OnRetryPressed() => GameManager.Instance?.ReloadCurrentLevel();
-        public void OnMenuFromEndPressed() => GameManager.Instance?.ReturnToMenu();
+        public void OnPausePressed()
+        {
+            AudioManager.Instance?.PlayUIClick();
+            pauseController.Pause();
+        }
+
+        public void OnRetryPressed()
+        {
+            AudioManager.Instance?.PlayUIClick();
+            GameManager.Instance?.ReloadCurrentLevel();
+        }
+
+        public void OnMenuFromEndPressed()
+        {
+            AudioManager.Instance?.PlayUIClick();
+            GameManager.Instance?.ReturnToMenu();
+        }
+
         public void OnNextLevelPressed()
         {
+            AudioManager.Instance?.PlayUIClick();
             var gm = GameManager.Instance;
             if (gm == null || gm.CurrentLevel == null) return;
             int nextIndex = gm.CurrentLevel.levelIndex;

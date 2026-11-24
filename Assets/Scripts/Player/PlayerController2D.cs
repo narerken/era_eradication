@@ -1,4 +1,5 @@
 using UnityEngine;
+using Emberfall.Audio;
 using Emberfall.Data;
 using Emberfall.Input;
 using Emberfall.Visual;
@@ -91,6 +92,7 @@ namespace Emberfall.Player
                 _coyoteTimer = 0f;
                 _jumpBufferTimer = 0f;
                 _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, stats.jumpForce);
+                AudioManager.Instance?.PlayJump();
             }
         }
 

@@ -1,4 +1,5 @@
 using UnityEngine;
+using Emberfall.Audio;
 
 namespace Emberfall.Enemies
 {
@@ -38,6 +39,7 @@ namespace Emberfall.Enemies
                 {
                     State = ShooterState.Aim;
                     _timer = stats.windUpTime;
+                    AudioManager.Instance?.PlayEnemyWindUp();
                 }
             }
         }

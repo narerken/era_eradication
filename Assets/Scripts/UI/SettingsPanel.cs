@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
+using Emberfall.Audio;
 using Emberfall.Save;
 
 namespace Emberfall.UI
@@ -24,6 +25,7 @@ namespace Emberfall.UI
         public void OnVolumeChanged(float _)
         {
             ApplyToMixer();
+            AudioManager.Instance?.SetVolumes(musicSlider.value, sfxSlider.value);
             SaveManager.Instance?.SetVolumes(musicSlider.value, sfxSlider.value);
         }
 
@@ -36,6 +38,10 @@ namespace Emberfall.UI
 
         private static float LinearToDb(float v) => v <= 0.0001f ? -80f : Mathf.Log10(v) * 20f;
 
-        public void OnBackPressed() => menu.ShowMenu();
+        public void OnBackPressed()
+        {
+            AudioManager.Instance?.PlayUIClick();
+            menu.ShowMenu();
+        }
     }
 }

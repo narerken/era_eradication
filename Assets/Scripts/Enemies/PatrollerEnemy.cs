@@ -1,4 +1,5 @@
 using UnityEngine;
+using Emberfall.Audio;
 
 namespace Emberfall.Enemies
 {
@@ -66,6 +67,7 @@ namespace Emberfall.Enemies
                     _windUpTimer = stats.windUpTime;
                     _lunging = false;
                     Stop();
+                    AudioManager.Instance?.PlayEnemyWindUp();
                     return;
                 }
                 MoveToward(player.position, stats.moveSpeed * stats.chaseSpeedMultiplier);
